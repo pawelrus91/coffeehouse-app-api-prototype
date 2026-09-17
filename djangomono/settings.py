@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # Local apps
+    'authx',
 ]
 
 MIDDLEWARE = [
@@ -60,6 +61,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'djangomono.urls'
+AUTH_USER_MODEL = 'authx.CustomUser'
 
 TEMPLATES = [
     {

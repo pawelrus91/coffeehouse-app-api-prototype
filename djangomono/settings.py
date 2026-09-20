@@ -152,6 +152,8 @@ MAILERS = {
     },
 }
 
+DEFAULT_FROM_EMAIL = 'test@example.com'
+
 # Django REST Framework
 # https://www.django-rest-framework.org/api-guide/settings/
 

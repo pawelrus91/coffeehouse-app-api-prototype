@@ -49,6 +49,14 @@ class TokenAuthentication(authentication.BaseAuthentication):
             user = User.objects.get(id=user_id)
         except User.DoesNotExist:
             raise AuthenticationFailed(
-                _("User not found"), code="user_not_found")
+                _("User not found"),
+                code="user_not_found"
+            )
+
+        if not user.is_active:
+            raise AuthenticationFailed(
+                _("User is inactive"),
+                code="user_inactive"
+            )
 
         return user

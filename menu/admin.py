@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Component
+from .models import MenuItem, Component
 
 # Register your models here.
+
+admin.site.register(MenuItem)
 admin.site.register(Component)

@@ -33,3 +33,8 @@ class MenuItem(models.Model):
 
     def __str__(self):
         return f"{self.name} {self.price_gross} PLN"
+
+
+class Menu(models.Model):
+    name = models.CharField(max_length=50, null=False, blank=False)
+    items = models.ManyToManyField(MenuItem)

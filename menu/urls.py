@@ -3,19 +3,28 @@ from django.urls import re_path
 
 from rest_framework.routers import DefaultRouter
 
-from .viewsets import MenuItemViewSet, ComponentViewSet
+from .viewsets import (
+    MenuViewSet,
+    MenuItemViewSet,
+    ComponentViewSet
+)
 
 router = DefaultRouter()
 
 router.register(
+    r'menu',
+    MenuViewSet,
+    basename="menu",
+)
+router.register(
     r'items',
     MenuItemViewSet,
-    basename='items',
+    basename="items",
 )
 router.register(
     r'components',
     ComponentViewSet,
-    basename='components',  # FIXME
+    basename="components",
 )
 
 urlpatterns = [

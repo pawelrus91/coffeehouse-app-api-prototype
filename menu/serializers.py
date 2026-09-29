@@ -1,6 +1,6 @@
 from rest_framework.serializers import SlugRelatedField, ModelSerializer
 from story.serializers import ManagerIngredientSerializer, BaristaIngredientSerializer
-from .models import MenuItem, Component
+from .models import Menu, MenuItem, Component
 
 
 class BaseComponentSerializer(ModelSerializer):
@@ -12,6 +12,12 @@ class BaseComponentSerializer(ModelSerializer):
 class BaseMenuItemSerializer(ModelSerializer):
     class Meta:
         model = MenuItem
+        fields = '__all__'
+
+
+class BaseMenuSerializer(ModelSerializer):
+    class Meta:
+        model = Menu
         fields = '__all__'
 
 
@@ -37,3 +43,15 @@ class CashierMenuItemSerializer(BaseMenuItemSerializer):
         read_only=True,
         slug_field='name'
     )
+
+
+class MenuSerializer(BaseMenuSerializer):
+    items = MenuItemSerializer(read_only=True, many=True)
+
+
+class AdminMenuSerializer(BaseMenuSerializer):
+    items = ManagerMenuItemsSerializer(read_only=True, many=True)
+
+
+class CashierMenuSerializer(BaseMenuSerializer):
+    items = CashierMenuItemSerializer(read_only=True, many=True)

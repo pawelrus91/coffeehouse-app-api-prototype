@@ -6,13 +6,15 @@ from authx.permissions import (
 )
 
 from .serializers import (
+    CreateMenuItemSerializer,
+    CreateMenuSerializer,
     MenuSerializer,
     CashierMenuSerializer,
-    AdminMenuSerializer,
     MenuItemSerializer,
+    ComponentSerializer,
+    AdminMenuSerializer,
     CashierMenuItemSerializer,
     ManagerMenuItemsSerializer,
-    ComponentSerializer,
     ManagerComponentSerializer,
 )
 from .models import Menu, MenuItem, Component
@@ -26,8 +28,12 @@ class MenuViewSet(ModelViewSet):
         if self.request.user.role == 1:
             return CashierMenuSerializer
         elif self.request.user.role >= 3:
+            if self.action in ['update', 'partial_update', 'create']:
+                return CreateMenuSerializer
             return AdminMenuSerializer
         else:
+            if self.action in ['update', 'partial_update', 'create']:
+                return CreateMenuSerializer
             return MenuSerializer
 
 
@@ -37,10 +43,15 @@ class MenuItemViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.request.user.role == 1:
+
             return CashierMenuItemSerializer
         elif self.request.user.role >= 3:
+            if self.action in ['update', 'partial_update', 'create']:
+                return CreateMenuItemSerializer
             return ManagerMenuItemsSerializer
         else:
+            if self.action in ['update', 'partial_update', 'create']:
+                return CreateMenuItemSerializer
             return MenuItemSerializer
 
 

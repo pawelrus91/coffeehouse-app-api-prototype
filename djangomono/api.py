@@ -6,4 +6,5 @@ urlpatterns = [
     path('supplier/', include('supplier.urls')),
     path('story/', include('story.urls')),
     path('menu/', include('menu.urls')),
+    path('purchase/', include('purchase.urls')),
 ]

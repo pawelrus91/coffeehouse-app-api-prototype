@@ -1,11 +1,20 @@
 from rest_framework.serializers import (
     ModelSerializer,
-    PrimaryKeyRelatedField
+    PrimaryKeyRelatedField,
+    CharField,
 )
 from menu.serializers import CashierMenuItemSerializer
 
 from .models import PurchaseOrder
 from menu.models import MenuItem
+
+
+class ListPurchaseOrderSerializer(ModelSerializer):
+    status = CharField(source="get_status_display")
+
+    class Meta:
+        model = PurchaseOrder
+        fields = ["status", "order_name"]
 
 
 class PurchaseOrderSerializer(ModelSerializer):

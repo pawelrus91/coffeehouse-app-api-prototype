@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.urls import reverse
 from django.core.mail import EmailMessage
 from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.tokens import default_token_generator
@@ -10,7 +12,7 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from rest_framework.status import HTTP_204_NO_CONTENT
+from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 
 from authx.permissions import IsOwnerUser
 
@@ -28,6 +30,26 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsOwnerUser]
+
+    def create(self, request, *args, **kwargs):
+        if settings.DEBUG:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+
+            user = serializer.instance
+            uid, token = self.send_auth_email(user)
+
+            data = serializer.data
+            activation_path = reverse("activate", args=[uid, token])
+            data.update({
+                "_activation_path": activation_path
+            })
+
+            return Response(data, status=HTTP_201_CREATED, headers=headers)
+
+        return super().create(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -52,11 +74,12 @@ class UserViewSet(ModelViewSet):
 
         email.send()
 
+        return uid, token
+
     def perform_create(self, serializer):
         user = serializer.save()
         user.is_active = False
 
-        self.send_auth_email(user)
         user.save()
 
 

@@ -1,6 +1,9 @@
+import json
+
 from django.conf import settings
 from django.urls import reverse
 from django.core.mail import EmailMessage
+from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model, logout
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.translation import gettext_lazy as _
@@ -11,14 +14,15 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from rest_framework.status import HTTP_204_NO_CONTENT, HTTP_201_CREATED
 
 from authx.permissions import IsOwnerUser
 
-from .serializers import UserSerializer
+from .serializers import UserSerializer, InfoUserSerializer
 
-from .jwt import create_jwt
+from .jwt import create_jwt, decode_jwt
 
 from datetime import datetime, timedelta, timezone
 
@@ -75,6 +79,17 @@ class UserViewSet(ModelViewSet):
         email.send()
 
         return uid, token
+
+    @action(detail=False, methods=['get'])
+    def me(self, request, *args, **kwargs):
+        token = request.META.get('HTTP_AUTHORIZATION')
+        segments = token.split(".")
+        validated_token = decode_jwt(segments[1])
+        res = json.loads(validated_token)
+        user_id = res.get("id")
+        user = get_object_or_404(User, id=user_id)
+        serializer = InfoUserSerializer(user)
+        return Response(serializer.data)
 
     def perform_create(self, serializer):
         user = serializer.save()

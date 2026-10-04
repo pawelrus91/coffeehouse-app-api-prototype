@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, CharField
 
 User = get_user_model()
 
@@ -20,3 +20,15 @@ class UserSerializer(ModelSerializer):
             instance.set_password(password)
         instance.save()
         return instance
+
+
+class InfoUserSerializer(ModelSerializer):
+    role = CharField(source="get_role_display")
+
+    class Meta:
+        model = User
+        exclude = ['password', 'groups', 'user_permissions']
+
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }

@@ -18,7 +18,7 @@ class ListPurchaseOrderSerializer(ModelSerializer):
 
     class Meta:
         model = PurchaseOrder
-        fields = ["status", "order_name"]
+        fields = ["status", "order_number"]
 
 
 class PurchaseOrderSerializer(ModelSerializer):
@@ -45,8 +45,8 @@ class CreatePurchaseOrderSerializer(PurchaseOrderSerializer):
         for key in all_quantity.keys():
             new_obj = Component.objects.get(pk=key).ingredient
             all_res = all_quantity[key]
-            if all_res > new_obj:
-                raise ValidationError(_("You don't have enough Ingredients"))
+            if all_res > new_obj.quantity:
+                raise ValidationError(_("No ingredients"))
 
         return super(CreatePurchaseOrderSerializer, self).validate(data)
 
@@ -56,4 +56,4 @@ class CreatePurchaseOrderSerializer(PurchaseOrderSerializer):
             created_date__date=today).count() + 1
         data['order_number'] = f"{today.strftime('%d%m%y')}_{count_date}"
 
-        return super(PurchaseOrderSerializer, self).to_internal_value(data)
+        return super(CreatePurchaseOrderSerializer, self).to_internal_value(data)

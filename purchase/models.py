@@ -44,8 +44,6 @@ def change_story(instance, **kwargs):
 
     all_quantity = dict()
     obj = list()
-    # item = MenuItem.objects.
-    # pass
 
     for id in pk_set:
         item = MenuItem.objects.get(pk=id)

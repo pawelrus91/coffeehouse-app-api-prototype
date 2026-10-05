@@ -10,7 +10,6 @@ from menu.serializers import CashierMenuItemSerializer
 
 from .models import PurchaseOrder
 from menu.models import MenuItem, Component
-from story.models import Ingredient
 
 
 class ListPurchaseOrderSerializer(ModelSerializer):
@@ -57,3 +56,10 @@ class CreatePurchaseOrderSerializer(PurchaseOrderSerializer):
         data['order_number'] = f"{today.strftime('%d%m%y')}_{count_date}"
 
         return super(CreatePurchaseOrderSerializer, self).to_internal_value(data)
+
+
+class PurchaseOrderSerializerCancelling(ModelSerializer):
+    class Meta:
+        model = PurchaseOrder
+        fields = ['status', 'order_number']
+        read_only_fields = ['status', 'order_number']

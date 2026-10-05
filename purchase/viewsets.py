@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
@@ -24,9 +26,18 @@ from .models import PurchaseOrder
 
 
 class PurchaseListView(ListAPIView):
-    queryset = PurchaseOrder.objects.all()
     serializer_class = ListPurchaseOrderSerializer
     permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        today = datetime.now()
+        queryset = PurchaseOrder.objects.filter(
+            created_date__date=today
+        )
+        status = self.request.query_params.get('status')
+        if status is not None:
+            queryset = queryset.filter(status__in=status.split(','))
+        return queryset
 
 
 class PurchaseViewSet(

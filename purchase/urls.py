@@ -3,7 +3,7 @@ from django.urls import re_path, path
 
 from rest_framework.routers import DefaultRouter
 
-from .viewsets import PurchaseViewSet, PurchaseListView
+from .viewsets import PurchaseViewSet, PurchaseListView, CancellingPurchase
 
 router = DefaultRouter()
 router.register(
@@ -16,5 +16,7 @@ router.register(
 urlpatterns = [
     re_path(r'', include(router.urls)),
     path('purchase-list/',
-         PurchaseListView.as_view(), name='purchase_list')
+         PurchaseListView.as_view(), name='purchase_list'),
+    path('purchase-cancel/<int:pk>/',
+         CancellingPurchase.as_view(), name='purchase_cancel'),
 ]

@@ -53,8 +53,12 @@ class CreatePurchaseOrderSerializer(PurchaseOrderSerializer):
         today = datetime.now()
         count_date = PurchaseOrder.objects.filter(
             created_date__date=today).count() + 1
+        user = None
+        request = self.context.get("request")
+        if request and hasattr(request, "user"):
+            user = request.user
         data['order_number'] = f"{today.strftime('%d%m%y')}_{count_date}"
-
+        data["created_by"] = user.pk
         return super(CreatePurchaseOrderSerializer, self).to_internal_value(data)
 
 

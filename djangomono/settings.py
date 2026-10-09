@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # Third-party apps
     'corsheaders',
     'rest_framework',
+    'drf_yasg',
 
     # Local apps
     'authx',
